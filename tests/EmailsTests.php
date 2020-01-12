@@ -129,6 +129,50 @@ class EmailsTests extends \PHPUnit\Framework\TestCase
         $this->assertEquals($targetEmail->subject, $results[0]->subject);
     }
 
+    public function testSearchMatchUnspecified()
+    {
+        $targetEmail = $this->emails[1];
+
+        $criteria = new SearchCriteria();
+
+        $criteria->sentTo = $targetEmail->to[0]->email;
+        $criteria->body = 'this is a test';
+
+        $results = $this->client->messages->search($this->server, $criteria)->items;
+
+        $this->assertCount(1, $results);
+    }
+
+    public function testSearchMatchAll()
+    {
+        $targetEmail = $this->emails[1];
+
+        $criteria = new SearchCriteria();
+
+        $criteria->sentTo = $targetEmail->to[0]->email;
+        $criteria->body = 'this is a test';
+        $criteria->match = 'all';
+
+        $results = $this->client->messages->search($this->server, $criteria)->items;
+
+        $this->assertCount(1, $results);
+    }
+
+    public function testSearchMatchAny()
+    {
+        $targetEmail = $this->emails[1];
+
+        $criteria = new SearchCriteria();
+
+        $criteria->sentTo = $targetEmail->to[0]->email;
+        $criteria->body = 'this is a test';
+        $criteria->match = 'any';
+
+        $results = $this->client->messages->search($this->server, $criteria)->items;
+
+        $this->assertCount(6, $results);
+    }
+
     public function testSpamAnalysis()
     {
         $targetId = $this->emails[0]->id;
